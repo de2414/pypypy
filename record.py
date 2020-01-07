@@ -1,9 +1,20 @@
 from tkinter import *
+#import tkinter as tk
 import sqlite3
 
-myConn = sqlite3.connect("student.db")
-from sqldb import *
-db =myDB("D:\\上課資料\\10801基礎程式設計\\student.db")
+conn = sqlite3.connect("student.db")
+db = conn.cursor()
+print("Opend database successfully")
+
+for row in db:
+   print("ID = ", row[0])
+   print("NASELE= ", row[1])
+   print("ADDRESS = ", row[2])
+   print("SALARY = ", row[3], "\n")
+
+print("Operation done successfully")
+conn.close()
+
 
 def getAllData():
     sqlstr = "SELECT Record.Std_Id,Student.Std_Name,Record.Course_Id, Record.Rcd"
@@ -12,7 +23,7 @@ def getAllData():
     sqlstr += "  on Student.Std_Id = Record.Std_Id"
     
     #myset = list()
-    myset = db.getSQLresult(sqlstr)
+    myset = db.execute(sqlstr)
 
     datalist.delete(0,END)
     for idx, item in enumerate(myset, 0):
@@ -61,14 +72,14 @@ def insertData():
     sqlstr += Qo(couvar.get().split(':')[0]) + ","
     sqlstr += Qo(erec.get()) + ")"
     
-    db.execSQLcommand(sqlstr)
+    db.execute(sqlstr)
     
     getAllData()
              
 def deleteData():
     sqlstr = "delete from  Course "
     sqlstr += " where Course_Id = " + Qo(ecou_id.get())
-    db.execSQLcommand(sqlstr)
+    db.execute(sqlstr)
     getAllData()
     
 def updateData():
@@ -81,7 +92,7 @@ def updateData():
 def preparedepList():
     sqlstr =  'select dep_id, Dep_Name'
     sqlstr += ' from department '
-    temp = db.getSQLresult(sqlstr)
+    temp = db.execute(sqlstr)
     for idx , itemdep in enumerate(temp,0):
         depset.append("{0} {1}".format(itemdep[0], itemdep[1]))
 def preparestdList():
@@ -89,7 +100,7 @@ def preparestdList():
     sqlstr += ' FROM Record '
     sqlstr += ' INNER JOIN Student '
     sqlstr += ' on Record.Std_Id = Student.Std_Id '
-    temp = db.getSQLresult(sqlstr)
+    temp = db.execute(sqlstr)
     for idx , itemstd in enumerate(temp,0):
         stuset.append("{0} {1}".format(itemstd[0], itemstd[1]))
 def preparecouList():
@@ -97,7 +108,7 @@ def preparecouList():
     sqlstr += ' FROM Record '
     sqlstr += ' INNER JOIN Course '
     sqlstr += ' on Course.Course_Id = Record.Course_Id '
-    temp = db.getSQLresult(sqlstr)
+    temp = db.execute(sqlstr)
     for idx , itemcou in enumerate(temp,0):
         couset.append("{0} {1}".format(itemcou[0], itemcou[1]))
 win = Tk()
